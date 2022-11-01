@@ -1,6 +1,6 @@
 class BezierCurve {
 
-    int n = 3;
+    int n = 4;
     PVector[] P;
     PVector[] R;
     int tn;
@@ -14,7 +14,7 @@ class BezierCurve {
             P[i].y = position_y(n, i);
         }
 
-        tn = 1000;
+        tn = 10;
         R = new PVector[tn+1];
     }
 
