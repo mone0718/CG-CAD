@@ -1,6 +1,6 @@
 class BezierCurve {
 
-    int n = 4;
+    int n = 3;
     PVector[] P;
     PVector[] R;
     int tn;
