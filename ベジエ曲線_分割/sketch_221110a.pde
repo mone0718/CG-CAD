@@ -45,7 +45,7 @@ class BezierCurve2 {
         fill(255, 255, 255);
         text("P0", P0.x+15, P0.y   ); // p0
         text("P1", P1.x, P1.y-15); // p1
-        text("P2", P2.x+10, P2.y-15); // p2
+        text("P2", P2.x, P2.y-20); // p2
 
         noFill();
         stroke(c);
@@ -256,7 +256,6 @@ int n = 10;
 
 BezierCurve2 B0;
 ArrayList<BezierCurve3> b;
-//BezierCurve3 b1, b2, b3;
 
 //PVector bp;
 float t;
@@ -279,54 +278,23 @@ void draw() {
 
     fill(255, 255, 255);
     text("BezierCurve", 10, 20);
-    text("u : Degree Elevation, s : Sprit, c : Choose, r : Repeat, q : Reset", 10, 33);
+    text("u : Degree Elevation, s : Sprit, c : Choose, q : Reset", 10, 33);
 
     //map(変換される値, 現在の範囲の最小値, 最大値, 変換する範囲の最小値, 最大値);
     t = map(mouseX, 20, width, 0, 1);
 
-    /*
-    switch(state) {
-     case 0: //次数上げ前
-     B0.draw(color(255, 255, 255));
-     break;
-     
-     case 1: //次数上げ
-     b.get((count*3)).draw(color(255, 255, 255));
-     b.get((count*3)).drawPointOnCurve(t);
-     break;
-     
-     case 2: //分割
-     b.get((count*3)+1).draw(color(255, 255, 0));
-     b.get((count*3)+2).draw(color(255, 0, 255));
-     b.get((count*3)).drawPointOnCurve(t);
-     break;
-     
-     case 3: //選択、繰り返す
-     if (mouseX < b.get((count*3)+2).P0.x) {
-     b.get((count*3)+1).draw(color(255, 255, 0));
-     } else {
-     b.get((count*3)+2).draw(color(255, 0, 255));
-     }
-     b.get((count*3)).drawPointOnCurve(t);
-     //println(count+" state3");
-     break;
-     }*/
-
-    //次数上げ前
     B0.draw(color(255, 255, 255));
 
     //次数上げ
     if (state == 1) {
         b.get((count*3)).draw(color(255, 255, 255));
         b.get((count*3)).drawPointOnCurve(t);
-        //println(count+" "+state);
     }
     //分割
     if (state == 2) {
         b.get((count*3)+1).draw(color(255, 255, 0));
         b.get((count*3)+2).draw(color(255, 0, 255));
         b.get((count*3)).drawPointOnCurve(t);
-        //println(count+" state2");
     }
     //選択
     if (state == 3) {
@@ -336,13 +304,6 @@ void draw() {
             b.get((count*3)+2).draw(color(255, 0, 255));
         }
         b.get((count*3)).drawPointOnCurve(t);
-        //println(count+" state3");
-    }
-    //繰り返し
-    if (state == 4) {
-        b.get((count*3)).draw(color(255, 255, 255));
-        b.get((count*3)).drawPointOnCurve(t);
-        //println(count+" state4");
     }
 }
 
@@ -352,7 +313,6 @@ void keyPressed() {
         B0.degreeElevation(b.get(0));
 
         state = 1;
-        println(count+" "+state);
     }
     if (key == 's' && state == 1) {
         b.add(new BezierCurve3());
@@ -361,30 +321,26 @@ void keyPressed() {
         b.get((count*3)).split(t, b.get((count*3)+1), b.get((count*3)+2));
 
         state = 2;
-        println(count+" "+state);
     }
     if (key == 'c' && state == 2) {
         b.add(new BezierCurve3());
         if (mouseX < b.get((count*3)+2).P0.x) {
-            b.get((count*3)+1).repeat(b.get(3));
+            b.get((count*3)+1).repeat(b.get((count*3)+3));
         } else {
-            b.get((count*3)+2).repeat(b.get(3));
+            b.get((count*3)+2).repeat(b.get((count*3)+3));
         }
-
         state = 3;
-        println(count+" "+state);
     }
     if (key == 'q') {
         state = 0;
-        println(count+" "+state);
+        count = 0;
     }
 }
 
 void keyReleased() {
-    if (key == 'r' && state == 3) {
+    if (key == 'c' && state == 3) {
         b.add(new BezierCurve3());
         count += 1;
         state = 1;
-        println(count+" "+state);
     }
 }
