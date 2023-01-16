@@ -7,8 +7,8 @@ float L[]={-1, 1, -1};
 float dif[]={1.0, 1.0, 1.0};
 float amb[]={0.2, 0.2, 0.2};
 
-float V[]={0, 0, -300};
-float E[]={0, 0, 0};
+float V[]={0, 0, -300}; //球たちとの距離
+float E[]={0, 0, 0}; //
 
 int OBJ_NUM=4;
 int ID=0;
@@ -63,12 +63,12 @@ float Highlight( float[] N ) {
     float rvn=0;
 
     float LN2=2 * (innerProduct(L, N));
-    
+
     rx=N[0]*LN2 - L[0];
     ry=N[1]*LN2 - L[1];
     rz=N[1]*LN2 - L[1];
     rv=rx*-E[0] + ry*-E[1] + rz*-E[2];
-    
+
     if ( rv >= 0 ) {
         float m=primitives[ID].m;
         rvn=1;
@@ -117,9 +117,9 @@ color Shading( float[] N, float[] P ) {
 }
 
 color RayTrace() {
-    float t=0;
-    float x, y, z;
-    float nx, ny, nz;
+    //float t=0;
+    //float x, y, z;
+    //float nx, ny, nz;
 
     if ( RayCast() ) {
         float[] P={E[0]*T+V[0], E[1]*T+V[1], E[2]*T+V[2]};
