@@ -1,11 +1,11 @@
 class BezierCurve {
 
-    int n = 5;
+    //int n = 5;
     PVector[] P;
     PVector[] R;
     int tn;
 
-    BezierCurve() {
+    BezierCurve(int n) {
 
         P = new PVector[n+1];
         for (int i = 0; i < n+1; i++) {
@@ -18,7 +18,7 @@ class BezierCurve {
         R = new PVector[tn+1];
     }
 
-    void draw_area() {
+    void draw_area(int n) {
 
         stroke(0, 255, 255);
         fill(0, 255, 255, 30);
@@ -30,7 +30,7 @@ class BezierCurve {
         endShape( CLOSE );
     }
 
-    void draw_line() {
+    void draw_line(int n) {
 
         fill(0, 255, 255);
 
@@ -39,7 +39,7 @@ class BezierCurve {
         }
     }
 
-    void draw_circle() {
+    void draw_circle(int n) {
 
         noStroke();
         fill(0, 255, 255);
@@ -49,7 +49,7 @@ class BezierCurve {
         }
     }
 
-    void draw_text() {
+    void draw_text(int n) {
 
         fill(255, 255, 255);
 
@@ -58,7 +58,7 @@ class BezierCurve {
         }
     }
 
-    void draw_curve() {
+    void draw_curve(int n) {
 
         int   tt;
         float t=0.0;
@@ -101,7 +101,7 @@ class BezierCurve {
     }
 
     int position_x (int n, int i) {
-        
+
         int x = 0;
         x = width / 2 - int(150 * cos(radians(180/n * i)));
 
@@ -109,39 +109,58 @@ class BezierCurve {
     }
 
     int position_y (int n, int i) {
-        
+
         int y = 0;
         y = height / 2 + 50 - int(150 * sin(radians(180/n * i)));
 
         return y;
     }
 
-    void draw() {
+    void draw(int n) {
 
-        draw_area();
-        draw_line();
-        draw_circle();
-        draw_text();
-        draw_curve();
-        
+        draw_area(n);
+        draw_line(n);
+        draw_circle(n);
+        draw_text(n);
+        draw_curve(n);
     }
 }
 
 BezierCurve b0;
 
-void setup() {
+int state = 0; //0:初期(クリック) 1:表示
+int count = 0; //制御点の数
 
+void setup() {
     size(400, 400);
-    b0 = new BezierCurve();
+    b0 = new BezierCurve(5);
 }
 
 void draw() {
     background(40);
-
+    
+    fill(255, 255, 255);
     text("BezierCurve", 10, 20);
 
     b0.P[0].x = mouseX;
     b0.P[0].y = mouseY;
 
-    b0.draw();
+    if (state == 0 && mousePressed) {
+        stroke(0, 255, 255);
+        fill(0, 255, 255);
+        ellipse(mouseX, mouseY, 10, 10);
+    }
+    
+    if (state == 1) b0.draw(5);
+}
+
+void mousePressed() {
+}
+
+void keyReleased() {
+    if (key == 'd' && state == 0) {
+        state = 1;
+    }else if (key == 'r' && state == 1) {
+        state = 0;
+    }
 }
