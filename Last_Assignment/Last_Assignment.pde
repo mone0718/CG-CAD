@@ -5,13 +5,13 @@ class BezierCurve {
     PVector[] R;
     int tn;
 
-    BezierCurve(int n) {
+    BezierCurve(int n, ArrayList<PVector> Pos) {
 
         P = new PVector[n+1];
         for (int i = 0; i < n+1; i++) {
-            P[i] = new PVector();
-            P[i].x = position_x(n, i);
-            P[i].y = position_y(n, i);
+            P[i] = Pos.get(i);
+            //P[i].x = position_x(n, i);
+            //P[i].y = position_y(n, i);
         }
 
         tn = 100;
@@ -21,7 +21,7 @@ class BezierCurve {
     void draw_area(int n) {
 
         stroke(0, 255, 255);
-        fill(0, 255, 255, 30);
+        fill(0, 255, 255, 20);
 
         beginShape();
         for (int i = 0; i < n+1; i++) {
@@ -32,7 +32,7 @@ class BezierCurve {
 
     void draw_line(int n) {
 
-        fill(0, 255, 255);
+        stroke(255, 200, 200);
 
         for (int i = 0; i < n; i++) {
             line(P[i].x, P[i].y, P[i+1].x, P[i+1].y);
@@ -60,17 +60,17 @@ class BezierCurve {
 
     void draw_curve(int n) {
 
-        int   tt;
-        float t=0.0;
+        int tt;
+        float t = 0.0;
         float ts = (float)1 / tn;
-        float[] B; //二項定理を一段階増やす
+        float[] B;
 
         B = new float[n+1];
 
         noFill();
         stroke(255, 255, 255);
 
-        for (tt = 0; tt < tn + 1; tt+=1) {
+        for (tt = 0; tt < tn + 1; tt++) {
             for (int r = 0; r < n+1; r++) {
                 B[r] =  binom(n, r) * pow(1-t, n-r) * pow(t, r); //基底関数
             }
@@ -100,27 +100,11 @@ class BezierCurve {
         return val;
     }
 
-    int position_x (int n, int i) {
-
-        int x = 0;
-        x = width / 2 - int(150 * cos(radians(180/n * i)));
-
-        return x;
-    }
-
-    int position_y (int n, int i) {
-
-        int y = 0;
-        y = height / 2 + 50 - int(150 * sin(radians(180/n * i)));
-
-        return y;
-    }
-
     void draw(int n) {
 
         draw_area(n);
-        draw_line(n);
-        draw_circle(n);
+        //draw_line(n);
+        //draw_circle(n);
         draw_text(n);
         draw_curve(n);
     }
@@ -129,38 +113,49 @@ class BezierCurve {
 BezierCurve b0;
 
 int state = 0; //0:初期(クリック) 1:表示
-int count = 0; //制御点の数
+int count = -1; //制御点の数
+
+ArrayList<PVector> clickPos;
 
 void setup() {
     size(400, 400);
-    b0 = new BezierCurve(5);
+    clickPos = new ArrayList<PVector>();
 }
 
 void draw() {
     background(40);
-    
+
     fill(255, 255, 255);
     text("BezierCurve", 10, 20);
 
-    b0.P[0].x = mouseX;
-    b0.P[0].y = mouseY;
+    //b0.P[0].x = mouseX;
+    //b0.P[0].y = mouseY;
 
-    if (state == 0 && mousePressed) {
-        stroke(0, 255, 255);
-        fill(0, 255, 255);
-        ellipse(mouseX, mouseY, 10, 10);
+    noStroke();
+    fill(0, 255, 255);
+
+    for (int i = 0; i < clickPos.size(); i++) {
+        PVector pos = clickPos.get(i);
+        ellipse(pos.x, pos.y, 10, 10);
     }
-    
-    if (state == 1) b0.draw(5);
+
+    if (state == 1) {
+        b0 = new BezierCurve(count, clickPos);
+        b0.draw(count);
+    }
 }
 
 void mousePressed() {
+    if (state == 0) {
+        clickPos.add(new PVector(mouseX, mouseY));
+        count++;
+    }
 }
 
 void keyReleased() {
     if (key == 'd' && state == 0) {
         state = 1;
-    }else if (key == 'r' && state == 1) {
+    } else if (key == 'r' && state == 1) {
         state = 0;
     }
 }
