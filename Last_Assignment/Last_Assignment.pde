@@ -30,25 +30,6 @@ class BezierCurve {
         endShape( CLOSE );
     }
 
-    void draw_line(int n) {
-
-        stroke(255, 200, 200);
-
-        for (int i = 0; i < n; i++) {
-            line(P[i].x, P[i].y, P[i+1].x, P[i+1].y);
-        }
-    }
-
-    void draw_circle(int n) {
-
-        noStroke();
-        fill(0, 255, 255);
-
-        for (int i = 0; i < n+1; i++) {
-            ellipse(P[i].x, P[i].y, 10, 10);
-        }
-    }
-
     void draw_text(int n) {
 
         fill(255, 255, 255);
@@ -103,8 +84,6 @@ class BezierCurve {
     void draw(int n) {
 
         draw_area(n);
-        //draw_line(n);
-        //draw_circle(n);
         draw_text(n);
         draw_curve(n);
     }
@@ -113,7 +92,9 @@ class BezierCurve {
 BezierCurve b0;
 
 int state = 0; //0:初期(クリック) 1:表示
-int count = -1; //制御点の数
+int count = 0; //制御点の数
+
+boolean select = false;
 
 ArrayList<PVector> clickPos;
 
@@ -126,24 +107,42 @@ void draw() {
     background(40);
 
     fill(255, 255, 255);
-    text("BezierCurve", 10, 20);
+    text("BezierCurve  d:Draw r:Reset", 10, 20);
+    text("Click to determine controle points → d:Draw r:Reset", 10, 40);
 
     //b0.P[0].x = mouseX;
     //b0.P[0].y = mouseY;
 
     noStroke();
-    fill(0, 255, 255);
+    float d;
 
     for (int i = 0; i < clickPos.size(); i++) {
         PVector pos = clickPos.get(i);
+
+        d = sqrt((pos.x-mouseX) * (pos.x-mouseX) + (pos.y-mouseY) * (pos.y-mouseY));
+        if (d < 12) {
+            fill(255, 255, 0);
+            if (mousePressed) {
+                pos.x = mouseX;
+                pos.y = mouseY;
+            }
+        } else {
+            fill(0, 255, 255);
+        }
         ellipse(pos.x, pos.y, 10, 10);
     }
 
     if (state == 1) {
-        b0 = new BezierCurve(count, clickPos);
-        b0.draw(count);
+        if (count < 3) {
+            fill(255, 50, 50);
+            text("Not enough control points.", 10, 40);
+        } else {
+            b0 = new BezierCurve(count-1, clickPos);
+            b0.draw(count-1);
+        }
     }
 }
+
 
 void mousePressed() {
     if (state == 0) {
@@ -156,6 +155,8 @@ void keyReleased() {
     if (key == 'd' && state == 0) {
         state = 1;
     } else if (key == 'r' && state == 1) {
+        clickPos = new ArrayList<PVector>();
         state = 0;
+        count = 0;
     }
 }
